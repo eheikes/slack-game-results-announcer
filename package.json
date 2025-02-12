@@ -1,0 +1,34 @@
+{
+  "name": "@eheikes/slack-game-results-announcer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Announces winners of NYT word games to a Slack channel",
+  "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eheikes/slack-game-results-announcer.git"
+  },
+  "scripts": {
+    "prebuild:bundle": "del bundle",
+    "build:bundle": "ncc build src/index.ts -o bundle --source-map --minify",
+    "prebuild": "del dist",
+    "build": "tsc"
+  },
+  "author": "Eric Heikes <eheikes@gmail.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/eheikes/slack-game-results-announcer/issues"
+  },
+  "homepage": "https://github.com/eheikes/slack-game-results-announcer#readme",
+  "dependencies": {
+    "@slack/web-api": "^7.8.0",
+    "comma-number": "^2.1.0",
+    "temporal-polyfill": "^0.2.5"
+  },
+  "devDependencies": {
+    "@types/comma-number": "^2.1.2",
+    "@vercel/ncc": "^0.38.3",
+    "del-cli": "^6.0.0",
+    "typescript": "^5.7.3"
+  }
+}
