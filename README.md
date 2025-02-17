@@ -9,7 +9,7 @@ It looks through the recent history of a Slack channel to find the reported scor
 You will need to create a Slack app in your desired workspace, which requires a Slack paid plan.
 
 * See the [Slack QuickStart guide](https://api.slack.com/quickstart) on how to create an app and get an auth token.
-* The bot will need the `chat:write` and `channels:history` scopes. It will also need `groups:history`, `im:history`, and 
+* The bot will need the `chat:write`, `channels:history`, and `users:read` scopes. It will also need `groups:history`, `im:history`, and 
 `mpim:history` for private channels, direct messages, or group direct message, respectively.
 * Copy the OAuth access token for when you run the app (see Usage below).
 * Invite the app to the channel where it can find the messages with the game results, and invite it to the channel where it should post the announcements. (Usually these are the same channel.)
