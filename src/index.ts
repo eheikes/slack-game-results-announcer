@@ -120,16 +120,20 @@ games.set('Strands', {
   isCommaSeparated: false,
   scoreMessage: (message: string) => {
     const matches = Array.from(message.matchAll(/(:.+?:)/g))
-    const scoreString = matches.map(match => match[0]).map(emoji => {
+    const emojis = matches.map(match => match[0])
+    let score = 0
+    for (const [index, emoji] of emojis.entries()) {
       if (emoji === ':large_blue_circle:') {
-        return '1'
+        score += 1
       } else if (emoji === ':large_yellow_circle:') {
-        return '5'
-      } else { // :bulb: or unknown
-        return '0'
+        const emojiWithoutClues = emojis.filter(e => e !== ':bulb:')
+        const indexDisregardingClues = emojiWithoutClues.indexOf(':large_yellow_circle:')
+        score += (emojiWithoutClues.length - indexDisregardingClues) * 0.1 // tiebreaker only
+      } else if (emoji === ':bulb:') {
+        score -= 1
       }
-    }).join('')
-    return Number(scoreString)
+    }
+    return score
   },
 })
 
