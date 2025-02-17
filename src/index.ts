@@ -5,8 +5,12 @@ import {
   LogLevel
 } from '@slack/web-api'
 import { MessageElement } from '@slack/web-api/dist/types/response/ConversationsHistoryResponse'
+import { User } from '@slack/web-api/dist/types/response/UsersInfoResponse'
 import commaNumber from 'comma-number'
 import { Temporal } from 'temporal-polyfill'
+
+// Initialize the user cache.
+const usersCache = new Map<string, User | null>()
 
 // Read in the CLI arguments.
 const args = process.argv.slice(2)
@@ -57,6 +61,27 @@ const baseConnectionsScore = (row: string): number => {
     return 4
   }
   return 0
+}
+
+const getUserName = (user?: User): string => {
+  return user?.profile?.real_name || user?.profile?.display_name || '<Unknown User>'
+}
+
+const getName = async (id: string): Promise<string> => {
+  // First check the cache.
+  const cachedUser = usersCache.get(id)
+  if (cachedUser) {
+    return getUserName(cachedUser)
+  }
+
+  // Look up the user via the Slack API.
+  const result = await web.users.info({ user: id })
+  const user = result.user
+  const name = getUserName(user)
+
+  // Cache the user and return the name.
+  usersCache.set(id, user ?? null)
+  return name
 }
 
 const games = new Map<string, GameDefinition>()
@@ -151,11 +176,13 @@ games.set('Strands', {
       }
 
       // Post the winner for each game.
-      const usernames = winningMessages
-        .map(message => message.user)
-        .filter(user => user !== undefined)
-        .map(userId => `<@${userId}>`)
-      const announcement = `🏆 Congratulations ${usernames.join(' and ')} for winning ${game.name} #${puzzleNumberFormatted}! 🏆`
+      const usernames = await Promise.all(
+        winningMessages
+          .map(message => message.user)
+          .filter(user => user !== undefined)
+          .map(userId => getName(userId))
+      )
+      const announcement = `🏆 Congratulations *${usernames.join('* and *')}* for winning ${game.name} #${puzzleNumberFormatted}! 🏆`
       console.log(announcement)
       await web.chat.postMessage({
         channel: channelDestination,
