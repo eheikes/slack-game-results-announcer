@@ -195,7 +195,7 @@ games.set('Strands', {
           .filter(user => user !== undefined)
           .map(userId => getName(userId))
       )
-      const winners = winningMessages.length === matchingMessages.length ? '*everyone*' : `*usernames.join('* and *')*`
+      const winners = winningMessages.length === matchingMessages.length ? '*everyone*' : `*${usernames.join('* and *')}*`
       const announcement = `🏆 Congratulations ${winners} for winning ${game.name} #${puzzleNumberFormatted}! 🏆`
       console.log(announcement)
       await web.chat.postMessage({
