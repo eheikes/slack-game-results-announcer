@@ -159,6 +159,15 @@ games.set('Strands', {
         return message.text?.includes(puzzleNumberFormatted) && message.text?.includes(game.name)
       })
       console.log('🔍 Found matching msgs:', matchingMessages)
+      if (matchingMessages.length === 0) {
+        console.log('0️⃣ No messages found, so no winner this time')
+        continue
+      }
+      if (matchingMessages.length === 1) {
+        console.log('1️⃣ Only one message found, so they win by default')
+        continue
+      }
+
       const winningMessages = matchingMessages.reduce((acc, message) => {
         if (acc.length === 0) {
           acc.push(message)
