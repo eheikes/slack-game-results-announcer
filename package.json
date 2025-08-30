@@ -9,8 +9,8 @@
     "url": "git+https://github.com/eheikes/slack-game-results-announcer.git"
   },
   "scripts": {
-    "prebuild:bundle": "del bundle",
-    "build:bundle": "ncc build src/index.ts -o bundle --source-map --minify",
+    "prebuild:serverless": "del bundle",
+    "build:serverless": "ncc build src/serverless.ts -o bundle --minify",
     "prebuild": "del dist",
     "build": "tsc"
   },
