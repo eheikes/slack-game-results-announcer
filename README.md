@@ -21,7 +21,13 @@ You will need [Node.js & npm](https://nodejs.org) to build and run this script.
 First run `npm install` to install the project's packages. Then build the project:
 
 * Run `npm run build` to build the project normally.
-* Run `npm run build:bundle` to build a self-contained file for use in AWS Lambda etc.
+* Run `npm run build:serverless` to build a self-contained script for use in AWS Lambda.
+  * Create a Lambda function and copy/upload the `bundle/index.js` to it (as `index.js`).
+  * Set `SLACK_TOKEN` in the environment variables.
+  * Set `SLACK_CHANNEL_SOURCE` in the environment variables.
+  * Set `SLACK_CHANNEL_DESTINATION` in the environment variables.
+  * Set `DAY_OFFSET` in the environment variables.
+  * [Schedule the Lambda to run using EventBridge](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-create-rule-schedule.html).
 
 ## Usage
 
