@@ -24,13 +24,17 @@ const referenceDate = Temporal.PlainDate.from('2025-01-01')
 
 interface GameDefinition {
   /** name of the game (from the messages) */
-  name: string
+  name: string | RegExp
+  /** name of the game (for displaying) */
+  readableName?: string
   /** puzzle number for the reference date */
   startNumber: number
   /** is the number comma-separated? */
   isCommaSeparated: boolean
   /** Function to score a message */
   scoreMessage: (message: string) => number
+  /** Is a lower score better? */
+  isScoringReversed?: boolean
 }
 
 const baseConnectionsScore = (row: string): number => {
@@ -47,6 +51,15 @@ const baseConnectionsScore = (row: string): number => {
     return 4
   }
   return 0
+}
+
+const scorePips = (message: string) => {
+  let score = 0
+  const match = message.match(/(\d+):(\d+)/)
+  if (match) {
+    score += parseInt(match[0]) * 60 + parseInt(match[1]!) // convert to seconds
+  }
+  return score
 }
 
 const getUserName = (user?: User): string => {
@@ -122,6 +135,27 @@ games.set('Strands', {
     return score
   },
 })
+games.set('PipsEasy', {
+  readableName: 'Pips Easy',
+  name: /Pips.*Easy/,
+  startNumber: -228,
+  isCommaSeparated: false,
+  scoreMessage: scorePips,
+})
+games.set('PipsMedium', {
+  readableName: 'Pips Medium',
+  name: /Pips.*Medium/,
+  startNumber: -228,
+  isCommaSeparated: false,
+  scoreMessage: scorePips,
+})
+games.set('PipsHard', {
+  readableName: 'Pips Hard',
+  name: /Pips.*Hard/,
+  startNumber: -228,
+  isCommaSeparated: false,
+  scoreMessage: scorePips,
+})
 
 export const run = async (channelSource: string, channelDestination: string, dayOffset: number): Promise<void> => {
   try {
@@ -142,7 +176,11 @@ export const run = async (channelSource: string, channelDestination: string, day
       console.log('👀 Looking for game #', puzzleNumberFormatted, 'for', game.name)
 
       const matchingMessages = (result.messages || []).filter((message) => {
-        return message.text?.includes(puzzleNumberFormatted) && message.text?.includes(game.name)
+        return message.text?.includes(puzzleNumberFormatted) && (
+          game.name instanceof RegExp ?
+            game.name.test(message.text || '') :
+            message.text?.includes(game.name)
+        )
       })
       console.log('🔍 Found matching msgs:', matchingMessages)
       if (matchingMessages.length === 0) {
@@ -160,7 +198,7 @@ export const run = async (channelSource: string, channelDestination: string, day
         } else {
           const currentScore = game.scoreMessage(acc[0]!.text || '')
           const newScore = game.scoreMessage(message.text || '')
-          if (newScore > currentScore) {
+          if (game.isScoringReversed ? newScore < currentScore : newScore > currentScore) {
             acc[0] = message
           } else if (newScore === currentScore) {
             acc.push(message)
@@ -175,6 +213,7 @@ export const run = async (channelSource: string, channelDestination: string, day
       }
 
       // Post the winner for each game.
+      const gameName = game.readableName || game.name
       const usernames = await Promise.all(
         winningMessages
           .map(message => message.user)
@@ -182,7 +221,7 @@ export const run = async (channelSource: string, channelDestination: string, day
           .map(userId => getName(userId))
       )
       const winners = winningMessages.length === matchingMessages.length ? '*everyone*' : `*${usernames.join('* and *')}*`
-      const announcement = `🏆 Congratulations ${winners} for winning ${game.name} #${puzzleNumberFormatted}! 🏆`
+      const announcement = `🏆 Congratulations ${winners} for winning ${gameName} #${puzzleNumberFormatted}! 🏆`
       console.log(announcement)
       await web.chat.postMessage({
         channel: channelDestination,
