@@ -59,7 +59,7 @@ const scorePips = (message: string) => {
   let score = 0
   const match = message.match(/(\d+):(\d+)/)
   if (match) {
-    score += parseInt(match[0]) * 60 + parseInt(match[1]!) // convert to seconds
+    score += parseInt(match[1]!) * 60 + parseInt(match[2]!) // convert to seconds
   }
   return score
 }
@@ -142,6 +142,7 @@ games.set('PipsEasy', {
   name: /Pips.*Easy/,
   startNumber: -228,
   isCommaSeparated: true,
+  isScoringReversed: true,
   scoreMessage: scorePips,
 })
 games.set('PipsMedium', {
@@ -149,6 +150,7 @@ games.set('PipsMedium', {
   name: /Pips.*Medium/,
   startNumber: -228,
   isCommaSeparated: true,
+  isScoringReversed: true,
   scoreMessage: scorePips,
 })
 games.set('PipsHard', {
@@ -156,6 +158,7 @@ games.set('PipsHard', {
   name: /Pips.*Hard/,
   startNumber: -228,
   isCommaSeparated: true,
+  isScoringReversed: true,
   scoreMessage: scorePips,
 })
 games.set('MemokuGlobal', {
