@@ -1,6 +1,6 @@
 # Slack Game Results Announcer
 
-A small script to announces the winners of NYT word games (Wordle, Connections, Strands, and Pips) to a Slack channel.
+A small script to announces the winners of NYT word games (Wordle, Connections, Strands, and Pips) and Puzzmo games (Memoku) to a Slack channel.
 
 It looks through the recent history of a Slack channel to find the reported scores of players, then calculates the winners, and announces them to another (or the same) Slack channel.
 

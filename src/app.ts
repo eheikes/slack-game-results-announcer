@@ -28,9 +28,11 @@ interface GameDefinition {
   /** name of the game (for displaying) */
   readableName?: string
   /** puzzle number for the reference date */
-  startNumber: number
+  startNumber?: number
+  /** uses a date instead of a number? */
+  usesDateId?: boolean
   /** is the number comma-separated? */
-  isCommaSeparated: boolean
+  isCommaSeparated?: boolean
   /** Function to score a message */
   scoreMessage: (message: string) => number
   /** Is a lower score better? */
@@ -156,6 +158,23 @@ games.set('PipsHard', {
   isCommaSeparated: true,
   scoreMessage: scorePips,
 })
+games.set('MemokuGlobal', {
+  readableName: 'Memoku Global',
+  name: /Memoku.*((Easter Island)|(Galapagos Islands)|(Inverness)|(Lobuche)|(Kota Kinabalu)|(Mawsynram)|(Reykjavík)|(Rio Grande)|(Svalbard))/s,
+  usesDateId: true,
+  isScoringReversed: true,
+  scoreMessage: (message: string) => {
+    let score = 0
+    const match = message.match(/(\d+) Flips.*(\d+):(\d+)/)
+    if (match) {
+      const bestFlips = 22
+      const numFlips = parseInt(match[1]!)
+      const time = parseInt(match[2]!) * 60 + parseInt(match[3]!) // convert to seconds
+      score += (numFlips - bestFlips) * 1000 + time
+    }
+    return score
+  },
+})
 
 export const run = async (channelSource: string, channelDestination: string, dayOffset: number): Promise<void> => {
   try {
@@ -170,13 +189,19 @@ export const run = async (channelSource: string, channelDestination: string, day
     const daysSinceReference = duration.days
 
     // Announce the winners for each game.
+    let puzzleIdFormatted = ''
     for (const game of games.values()) {
-      const puzzleNumber = game.startNumber + daysSinceReference + dayOffset
-      const puzzleNumberFormatted = game.isCommaSeparated ? commaNumber(puzzleNumber) : String(puzzleNumber)
-      console.log('👀 Looking for game #', puzzleNumberFormatted, 'for', game.name)
+      if (game.usesDateId) {
+        const date = Temporal.Now.plainDateISO().add({ days: dayOffset })
+        puzzleIdFormatted = `${date.year}-${String(date.month).padStart(2, '0')}-${String(date.day).padStart(2, '0')}`
+      } else {
+        const puzzleNumber = (game.startNumber ?? 0) + daysSinceReference + dayOffset
+        puzzleIdFormatted = game.isCommaSeparated ? commaNumber(puzzleNumber) : String(puzzleNumber)
+      }
+      console.log('👀 Looking for game #', puzzleIdFormatted, 'for', game.name)
 
       const matchingMessages = (result.messages || []).filter((message) => {
-        return message.text?.includes(puzzleNumberFormatted) && (
+        return message.text?.includes(puzzleIdFormatted) && (
           game.name instanceof RegExp ?
             game.name.test(message.text || '') :
             message.text?.includes(game.name)
@@ -221,7 +246,7 @@ export const run = async (channelSource: string, channelDestination: string, day
           .map(userId => getName(userId))
       )
       const winners = winningMessages.length === matchingMessages.length ? '*everyone*' : `*${usernames.join('* and *')}*`
-      const announcement = `🏆 Congratulations ${winners} for winning ${gameName} #${puzzleNumberFormatted}! 🏆`
+      const announcement = `🏆 Congratulations ${winners} for winning ${gameName} ${game.usesDateId ? '' : '#'}${puzzleIdFormatted}! 🏆`
       console.log(announcement)
       await web.chat.postMessage({
         channel: channelDestination,
