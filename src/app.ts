@@ -100,7 +100,7 @@ games.set('Wordle', {
 games.set('Connections', {
   name: 'Connections',
   startNumber: 570,
-  isCommaSeparated: false,
+  isCommaSeparated: true,
   scoreMessage: (message: string) => {
     // See https://www.nytimes.com/2024/02/19/us/how-i-designed-my-perfect-connections-solve.html
     let score = 0
@@ -116,7 +116,7 @@ games.set('Connections', {
 games.set('Strands', {
   name: 'Strands',
   startNumber: 304,
-  isCommaSeparated: false,
+  isCommaSeparated: true,
   scoreMessage: (message: string) => {
     const matches = Array.from(message.matchAll(/(:.+?:)/g))
     const emojis = matches.map(match => match[0])
@@ -139,21 +139,21 @@ games.set('PipsEasy', {
   readableName: 'Pips Easy',
   name: /Pips.*Easy/,
   startNumber: -228,
-  isCommaSeparated: false,
+  isCommaSeparated: true,
   scoreMessage: scorePips,
 })
 games.set('PipsMedium', {
   readableName: 'Pips Medium',
   name: /Pips.*Medium/,
   startNumber: -228,
-  isCommaSeparated: false,
+  isCommaSeparated: true,
   scoreMessage: scorePips,
 })
 games.set('PipsHard', {
   readableName: 'Pips Hard',
   name: /Pips.*Hard/,
   startNumber: -228,
-  isCommaSeparated: false,
+  isCommaSeparated: true,
   scoreMessage: scorePips,
 })
 
