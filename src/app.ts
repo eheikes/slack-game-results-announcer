@@ -31,6 +31,8 @@ interface GameDefinition {
   startNumber?: number
   /** uses a date instead of a number? */
   usesDateId?: boolean
+  /** function to format date to the puzzle's date */
+  formatDate?: (date: Temporal.PlainDate) => string
   /** is the number comma-separated? */
   isCommaSeparated?: boolean
   /** Function to score a message */
@@ -165,6 +167,9 @@ games.set('MemokuGlobal', {
   readableName: 'Memoku Global',
   name: /Memoku.*((Easter Island)|(Galapagos Islands)|(Inverness)|(Lobuche)|(Kota Kinabalu)|(Mawsynram)|(Reykjavík)|(Rio Grande)|(Svalbard))/s,
   usesDateId: true,
+  formatDate: (date: Temporal.PlainDate) => {
+    return `${date.year}-${String(date.month).padStart(2, '0')}-${String(date.day).padStart(2, '0')}`
+  },
   isScoringReversed: true,
   scoreMessage: (message: string) => {
     let score = 0
@@ -174,6 +179,22 @@ games.set('MemokuGlobal', {
       const numFlips = parseInt(match[1]!)
       const time = parseInt(match[2]!) * 60 + parseInt(match[3]!) // convert to seconds
       score += (numFlips - bestFlips) * 1000 + time
+    }
+    return score
+  },
+})
+games.set('Bracket City', {
+  name: 'Bracket City',
+  usesDateId: true,
+  formatDate: (date: Temporal.PlainDate) => {
+    const longMonth = date.toLocaleString('en-US', { calendar: date.calendarId, month: 'long' })
+    return `${longMonth} ${date.day}, ${date.year}`
+  },
+  scoreMessage: (message: string) => {
+    let score = 0
+    const match = message.match(/Total Score: ([\d\.]+)/)
+    if (match) {
+      score += parseFloat(match[1]!)
     }
     return score
   },
