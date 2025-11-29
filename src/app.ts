@@ -217,7 +217,9 @@ export const run = async (channelSource: string, channelDestination: string, day
     for (const game of games.values()) {
       if (game.usesDateId) {
         const date = Temporal.Now.plainDateISO().add({ days: dayOffset })
-        puzzleIdFormatted = `${date.year}-${String(date.month).padStart(2, '0')}-${String(date.day).padStart(2, '0')}`
+        puzzleIdFormatted = typeof game.formatDate === 'function' ?
+          game.formatDate(date) :
+          `${date.year}-${String(date.month).padStart(2, '0')}-${String(date.day).padStart(2, '0')}`
       } else {
         const puzzleNumber = (game.startNumber ?? 0) + daysSinceReference + dayOffset
         puzzleIdFormatted = game.isCommaSeparated ? commaNumber(puzzleNumber) : String(puzzleNumber)
