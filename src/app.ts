@@ -231,7 +231,7 @@ export const run = async (channelSource: string, channelDestination: string, day
           game.name instanceof RegExp ?
             game.name.test(message.text || '') :
             message.text?.includes(game.name)
-        )
+        ) && !/Congratulations.*for winning/.test(message.text) // ignore previous announcements
       })
       console.log('🔍 Found matching msgs:', matchingMessages)
       if (matchingMessages.length === 0) {
