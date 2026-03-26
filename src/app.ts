@@ -104,7 +104,7 @@ games.set('Wordle', {
 games.set('Connections', {
   name: 'Connections',
   startNumber: 570,
-  isCommaSeparated: true,
+  isCommaSeparated: false,
   scoreMessage: (message: string) => {
     // See https://www.nytimes.com/2024/02/19/us/how-i-designed-my-perfect-connections-solve.html
     let score = 0
