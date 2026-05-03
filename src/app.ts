@@ -199,6 +199,25 @@ games.set('Bracket City', {
     return score
   },
 })
+games.set('Parseword', {
+  name: 'Parseword',
+  startNumber: -392,
+  isScoringReversed: true,
+  scoreMessage: (message: string) => {
+    let score = 0
+    const timeMatch = message.match(/(([\d]+)m)?([\d]+)s/)
+    if (timeMatch) {
+      const min = parseInt(timeMatch[2] || '0', 10)
+      const sec = parseInt(timeMatch[3]!, 10)
+      score += min * 60 + sec
+    }
+    const hintMatch = message.match(/(\d+) hint/i)
+    if (hintMatch) {
+      score += parseInt(hintMatch[1]!, 10) * 30 // each hint adds 30 seconds
+    }
+    return score
+  },
+})
 
 export const run = async (channelSource: string, channelDestination: string, dayOffset: number): Promise<void> => {
   try {
