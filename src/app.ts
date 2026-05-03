@@ -218,6 +218,18 @@ games.set('Parseword', {
     return score
   },
 })
+games.set('Raddle', {
+  name: 'Raddle',
+  startNumber: -54,
+  scoreMessage: (message: string) => {
+    message = message.replace(/:100:/g, '100%') // replace 100 emoji
+    const match = message.match(/(\d+)%/)
+    if (match) {
+      return parseInt(match[1]!, 10)
+    }
+    return 0
+  },
+})
 
 export const run = async (channelSource: string, channelDestination: string, dayOffset: number): Promise<void> => {
   try {
