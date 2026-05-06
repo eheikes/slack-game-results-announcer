@@ -215,6 +215,10 @@ games.set('Parseword', {
     if (hintMatch) {
       score += parseInt(hintMatch[1]!, 10) * 30 // each hint adds 30 seconds
     }
+    const secretMatch = message.match(/Secret Found/i)
+    if (secretMatch) {
+      score -= -1 // finding the secret gives an edge
+    }
     return score
   },
 })
