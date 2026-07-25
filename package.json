@@ -21,9 +21,9 @@
   },
   "homepage": "https://github.com/eheikes/slack-game-results-announcer#readme",
   "dependencies": {
-    "@slack/web-api": "^7.8.0",
+    "@slack/web-api": "^7.19.0",
     "comma-number": "^2.1.0",
-    "temporal-polyfill": "^0.2.5"
+    "temporal-polyfill": "^0.3.2"
   },
   "devDependencies": {
     "@types/comma-number": "^2.1.2",
