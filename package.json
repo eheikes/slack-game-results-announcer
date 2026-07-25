@@ -27,8 +27,8 @@
   },
   "devDependencies": {
     "@types/comma-number": "^2.1.2",
-    "@vercel/ncc": "^0.38.3",
+    "@vercel/ncc": "^0.44.1",
     "del-cli": "^6.0.0",
-    "typescript": "^5.7.3"
+    "typescript": "^5.9.3"
   }
 }
